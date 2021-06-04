@@ -1,0 +1,128 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Websocket sample</title>
+    <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+    <script src="https://unpkg.com/networked-aframe/dist/networked-aframe.min.js"></script>
+    <script src="/easyrtc/easyrtc.js"></script>
+
+    <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
+    <script src="./spawn-in-circle.component.js"></script>
+  </head>
+  <body>
+    <!-- https://github.com/networked-aframe/networked-aframe -->
+    <!-- 
+      networked-scene属性によって、WebSocketの同一チャネル（チャットルームみたいなもの）を作る
+      adapterとしてsoketioを選ぶことによって、Websocketでの通信になる。
+      ここをwebrtcにするとWebRTCでの通信になる
+     -->
+    <a-scene networked-scene="room: dev; debug: true; adapter: easyrtc; audio: true;">
+      <!-- アセット -->
+      <a-assets>
+        <!-- <img id="sky" src="googlestreetview.jpg" crossorigin="anonymous" /> -->
+        <img id="sky" src="./city/43134515491_dca33838f4_o.jpg" crossorigin="anonymous" />
+
+        <!-- アバターをテンプレートにしておく（gltfモデルを読み込むでも良い) -->
+        <a-asset-item id="robo" src="./robot/Robot_01.gltf"></a-asset-item>
+
+        <!-- 家のモデルを読み込んでおく -->
+        <!-- <a-asset-item id="home" src="./home/AM_200m_glTF-7.gltf"></a-asset-item> -->
+        <a-asset-item id="city" src="./city/modern_mansion_2_eevee.glb"></a-asset-item>
+        <a-asset-item id="back" src="./city/Crater.glb"></a-asset-item>
+
+        <template id="avatar-template">
+          <a-entity class="avatar" networked-audio-source>
+            <!-- アバターを作る -->
+            <a-gltf-model position="0 -1.6 0" rotation="0 180 0" scale="0.1 0.1 0.1" src="#robo" animation-mixer=""></a-gltf-model>
+          </a-entity>
+        </template>
+      </a-assets>
+
+      <!-- カメラ＆アバター
+        networkd属性がつけられるところがポイント
+       -->
+      <a-entity id="player" networked="template:#avatar-template;attachTemplateToLocal:false;" camera position="0 3.6 0" spawn-in-circle="radius:3" wasd-controls look-controls> </a-entity>
+
+      <!-- <a-entity light="color: #ccccff; intensity: 1; type: ambient;" visible=""></a-entity>
+      <a-entity light="color: #ffaaff; intensity: 1.5" position="5 5 5"></a-entity> -->
+
+      <!-- <a-gltf-model position="0 0 0" scale="0.0015 0.0015 0.0015" rotation="90 180 0" src="#home" animation-mixer=""></a-gltf-model> -->
+      <!-- <a-gltf-model position="0 -2 0" src="#city" animation-mixer=""></a-gltf-model> -->
+      <a-gltf-model position="0 -2 0" src="#back" animation-mixer=""></a-gltf-model>
+
+      <a-sky src="#sky" rotation=""></a-sky>
+    </a-scene>
+    <button id="mic-btn" type="button" class="mic-btn">Mute Mic</button>
+    <style>
+      .mic-btn {
+        position: absolute;
+        cursor: pointer;
+        bottom: 3%;
+        left: 3%;
+        background: #fff;
+        height: 40px;
+        width: 100px;
+        border-radius: 30px;
+      }
+      .github-corner:hover .octo-arm {
+        animation: octocat-wave 560ms ease-in-out;
+      }
+      @keyframes octocat-wave {
+        0%,
+        100% {
+          transform: rotate(0);
+        }
+        20%,
+        60% {
+          transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+          transform: rotate(10deg);
+        }
+      }
+      @media (max-width: 500px) {
+        .github-corner:hover .octo-arm {
+          animation: none;
+        }
+        .github-corner .octo-arm {
+          animation: octocat-wave 560ms ease-in-out;
+        }
+      }
+    </style>
+    <script>
+      // Mic status
+      let micEnabled = true;
+      // Mic button ele
+      const micBtnEle = document.getElementById('mic-btn');
+      // On mobile remove elements that are resource heavy
+      const isMobile = AFRAME.utils.device.isMobile();
+
+      if (isMobile) {
+        const particles = document.getElementById('particles');
+        particles.parentNode.removeChild(particles);
+      }
+
+      // ネットワークで同期するテンプレートおよび、属性値を決める
+      // components にposition と rotationをセットしているので、
+      // ランダムにセットされたアバターカラーを同期するためのカスタムスキーマを定義する
+      NAF.schemas.add({
+        template: '#avatar-template',
+        components: ['position', 'rotation'],
+      });
+
+      // Called by Networked-Aframe when connected to server
+      function onConnect() {
+        console.log('onConnect', new Date());
+
+        // Handle mic button click (Mute and Unmute)
+        micBtnEle.addEventListener('click', function () {
+          NAF.connection.adapter.enableMicrophone(!micEnabled);
+          micEnabled = !micEnabled;
+          micBtnEle.textContent = micEnabled ? 'Mute Mic' : 'Unmute Mic';
+        });
+      }
+    </script>
+  </body>
+</html>
