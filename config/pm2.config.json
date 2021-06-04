@@ -1,5 +1,5 @@
 {
-  "name": "blockvrock",
+  "name": "aframe-network",
   "script": "server/easyrtc-server.js",
   "env": {
     "NODE_ENV": "development"
