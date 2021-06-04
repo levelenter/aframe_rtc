@@ -17,7 +17,10 @@
       adapterとしてsoketioを選ぶことによって、Websocketでの通信になる。
       ここをwebrtcにするとWebRTCでの通信になる
      -->
-    <a-scene networked-scene="room: dev; debug: true; adapter: easyrtc; audio: true;">
+    <a-scene
+      networked-scene=" serverURL: ./;
+    room: dev; debug: true; adapter: easyrtc; audio: true;"
+    >
       <a-assets>
         <img id="sky" src="./city/43134515491_dca33838f4_o.jpg" crossorigin="anonymous" />
         <a-asset-item id="robo" src="./robot/Robot_01.gltf"></a-asset-item>
