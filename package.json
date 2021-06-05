@@ -12,10 +12,10 @@
     "sv:compile": "./node_modules/.bin/tsc --p build ",
     "sv:start": "pm2 start config/pm2.config.json --env production",
     "//prod": "run-s prod:web sv:compile prod:sv ",
-    "prod": "run-s prod:sv ",
+    "prod": "run-s prod:del prod:sv ",
     "prod:sv": "run-s sv:start",
     "//prod:web": "./node_modules/.bin/webpack --env production",
-    "prod:del": "sudo pm2 delete all  "
+    "prod:del": "sudo pm2 del aframe-network  "
   },
   "dependencies": {
     "express": "^4.17.1",
