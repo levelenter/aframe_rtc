@@ -1,9 +1,9 @@
 // Load required modules
-const http = require('http'); // http server core module
-const path = require('path');
-const express = require('express'); // web framework external module
-const socketIo = require('socket.io'); // web socket external module
-const easyrtc = require('open-easyrtc'); // EasyRTC external module
+import http from 'http'; // http server core module
+import path from 'path';
+import express from 'express'; // web framework external module
+import socketIo from 'socket.io'; // web socket external module
+import easyrtc from 'open-easyrtc'; // EasyRTC external module
 
 // Set process name
 process.title = 'networked-aframe-server';
@@ -13,20 +13,7 @@ const port = process.env.PORT || 8081;
 
 // Setup and configure Express http server.
 const app = express();
-app.use(express.static(path.resolve(__dirname, '..', 'client')));
-
-// Serve the example and build the bundle in development.
-// if (process.env.NODE_ENV === 'development') {
-//   const webpackMiddleware = require('webpack-dev-middleware');
-//   const webpack = require('webpack');
-//   const config = require('../webpack.config');
-
-//   app.use(
-//     webpackMiddleware(webpack(config), {
-//       publicPath: '/',
-//     })
-//   );
-// }
+app.use(express.static(path.resolve(path.dirname('..'), 'client')));
 
 // Start Express http server
 const webServer = http.createServer(app);
