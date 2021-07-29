@@ -1,44 +1,102 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Websocket sample</title>
-    <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@f77bcc2bfec96283af6a301bedc68c0274941005/dist/aframe-master.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
     <script src="https://unpkg.com/networked-aframe/dist/networked-aframe.min.js"></script>
-    <script src="./easyrtc/easyrtc.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script>
+    <!--  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script> -->
 
+    <script src="./easyrtc/easyrtc.js"></script>
+    <script src="./get-username.js"></script>
+    <script src="./avataer-change.js"></script>
     <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
     <script src="./spawn-in-circle.component.js"></script>
+    <!-- <script src="./test.js"></script> -->
+    <script src="./video.js"></script>
   </head>
   <body>
+    <div class="inputName">
+      <input id="username" type="text" value="username" />
+      <input id="namebutton" type="button" value="決定" />
+    </div>
+    <div class="avaterChange">
+      <input id="changebutton" type="button" value="アバター変更" />
+    </div>
+    <div class="testbutton">
+      <input id="test-button" type="button" value="テスト" />
+    </div>
+    <div class="playbutton">
+      <input id="play-button" type="button" value="ビデオ再生" />
+    </div>
+    <div class="stopbutton">
+      <input id="stop-button" type="button" value="ビデオ停止" />
+    </div>
     <!-- https://github.com/networked-aframe/networked-aframe -->
     <!-- 
       networked-scene属性によって、WebSocketの同一チャネル（チャットルームみたいなもの）を作る
       adapterとしてsoketioを選ぶことによって、Websocketでの通信になる。
       ここをwebrtcにするとWebRTCでの通信になる
      -->
-    <a-scene networked-scene="room: dev; debug: true; adapter: easyrtc; audio: true;">
+    <a-scene class="scene" networked-scene="room: dev; debug: true; adapter: easyrtc; audio: true;">
+      <!-- <a-entity position="0 1 0" rotation="0 0 0" text="font: mozillavr; value:User Name"></a-entity> -->
       <a-assets>
-        <img id="sky" src="./city/43134515491_dca33838f4_o.jpg" crossorigin="anonymous" />
-        <a-asset-item id="robo" src="./robot/Robot_01.gltf"></a-asset-item>
-        <a-asset-item id="back" src="./city/Crater.glb"></a-asset-item>
-
-        <template id="avatar-template">
-          <a-entity class="avatar" networked-audio-source>
-            <!-- アバターを作る -->
-            <a-gltf-model position="0 -1.6 0" rotation="0 180 0" scale="0.1 0.1 0.1" src="#robo" animation-mixer=""></a-gltf-model>
+        <img id="sky" src="./city/43134515491_dca33838f4_o.jpg" crossorigin="anonymous" response-type="arraybuffer" />
+        <a-asset-item id="robo" src="./robot/Robot_01.gltf" crossorigin="anonymous" response-type="arraybuffer"></a-asset-item>
+        <a-asset-item id="avocado" src="./avocado/avocado.glb" crossorigin="anonymous" response-type="arraybuffer"></a-asset-item>
+        <a-asset-item id="back" src="./city/Crater.glb" crossorigin="anonymous" response-type="arraybuffer"></a-asset-item>
+        <a-asset-item id="rip" src="./figurehead-of-hms-prince-of-wales-3d-model/scene.gltf" crossorigin="anonymous" response-type="arraybuffer"></a-asset-item>
+        <video class="waterfallvideo" id="waterfall" autoplay muted="false" loop="true" src="video/Waterfall.mp4"></video>
+        <template id="my-template" >
+          <a-entity>
+            <a-gltf-model id="videomole" class="videomodel" position="0 -1.6 1" rotation="0 180 0" scale="0.1 0.1 0.1" src="#robo" animation-mixer="" testplay > </a-gltf-model>
           </a-entity>
         </template>
       </a-assets>
 
+        <template id="avatar-template">
+          <a-entity></a-entity>
+        </template>
+        <template id="head-template" sync-components="['position', 'rotation', 'gltf-model']">
+          <a-entity class="avatar" networked-audio-source stand-on="raycaster:#stand-on-ray">
+            <a-entity id="stand-on-ray" raycaster="objects: .ground; direction:0 -1 0"></a-entity>
+            <a-text class="nametag" id="usernametext" position="0.5 2 1" width="10" height="10" rotation="0 180 0" value="user" side="double" get-username></a-text>
+            <!-- アバターを作る -->
+            <a-gltf-model id="avatarid" class="avatarmodel" position="0 -1.6 1" rotation="0 180 0" scale="0.1 0.1 0.1" src="#robo" animation-mixer="" avatar-change muteplay mutestop> </a-gltf-model>
+            <!-- <a-entity class="avatarmodel" position="0 -1.6 1" rotation="0 180 0" scale="0.1 0.1 0.1" gltf-model="#robo" animation-mixer="" avatar-change></a-entity> -->
+          </a-entity>
+        </template>
+        <template id="avocado-template">
+          <a-entity class="avatar" networked-audio-source stand-on="raycaster:#stand-on-ray">
+            <a-entity id="stand-on-ray" raycaster="objects: .ground; direction:0 -1 0"></a-entity>
+            <a-text class="nametag" id="usernametext" position="0.5 2 1" width="10" height="10" rotation="0 180 0" value="" side="double" get-username></a-text>
+            <!-- アバターを作る -->
+            <a-gltf-model class="avatarmodel" position="0 -1.6 1" rotation="0 180 0" scale="0.1 0.1 0.1" src="#rip" animation-mixer="" > </a-gltf-model>
+          </a-entity>
+        </template>
+      </a-assets>
+
+      <a-video class="video" src="#waterfall" width="10" height="7" position="0 1.6 -9" rotation="0 15 0" webkit-playsinline playsinline > </a-video>
       <!-- カメラ＆アバター
         networkd属性がつけられるところがポイント
        -->
-      <a-entity id="player" networked="template:#avatar-template;attachTemplateToLocal:false;" camera position="0 3.6 0" spawn-in-circle="radius:3" wasd-controls look-controls> </a-entity>
-      <a-gltf-model position="0 -2 0" src="#back" animation-mixer=""></a-gltf-model>
-
+      <a-entity movement-controls="constrainToNavMesh: true; speed:0.5" stand-on="raycaster:#stand-on-ray" networked="template:#avatar-template;attachTemplateToLocal:false;">
+        <a-entity id="stand-on-ray" raycaster="objects: .ground; direction:0 -1 0"></a-entity>
+        <a-entity id="raycaster-f" raycaster="objects: .collidable; far: 1; direction:0 0 -1"></a-entity>
+        <a-entity id="raycaster-b" raycaster="objects: .collidable; far: 1; direction:0 0 1"></a-entity>
+        <a-entity id="raycaster-l" raycaster="objects: .collidable; far: 1; direction:1 0 0"></a-entity>
+        <a-entity id="raycaster-r" raycaster="objects: .collidable; far: 1; direction:-1 0 0"></a-entity>
+        <a-entity position="0 0 0" id="player" camera spawn-in-circle="radius:3" look-controls wasd-controls networked="template:#head-template;attachTemplateToLocal:true;" avatarupdate></a-entity>
+      </a-entity>
+      <!-- <a-entity id="videoset" networked="template:#my-template;attachTemplateToLocal:true">
+      </a-entity> -->
+      <!-- <a-gltf-model class="videomodel" position="0 -1.6 1" rotation="0 180 0" scale="0.1 0.1 0.1" src="#robo" animation-mixer="" testplay muteplay mutestop> </a-gltf-model> -->
+      <a-gltf-model position="0 -1.6 0" src="#back" animation-mixer="" class="ground"></a-gltf-model>
       <a-sky src="#sky" rotation=""></a-sky>
     </a-scene>
+
     <button id="mic-btn" type="button" class="mic-btn">Mute Mic</button>
     <style>
       .mic-btn {
@@ -76,8 +134,51 @@
           animation: octocat-wave 560ms ease-in-out;
         }
       }
+      .inputName {
+        z-index: 9999;
+        position: absolute;
+      }
+      .avaterChange {
+        z-index: 9999;
+        position: absolute;
+        left: 500px;
+      }
+      .testbutton {
+        z-index: 9999;
+        position: absolute;
+        left: 750px;
+      }
+      .playbutton {
+        z-index: 9999;
+        position: absolute;
+        left: 850px;
+      }
+      .stopbutton {
+        z-index: 9999;
+        position: absolute;
+        left: 950px;
+      }
     </style>
     <script>
+     /* document.body.addEventListener('clientConnected', function (evt) {
+      const data = NAF.utils.getNetworkedEntity(evt).then((el) => {
+      const videomodel = document.getElementById('naf-' + el.components.networked.nextData['networkId']);
+      console.log(videomodel);
+      const comp = document.querySelector('.videomodel').components.muteplay.data.toggle;
+      const v = document.querySelector('.waterfallvideo');
+
+      if (comp == 1) {
+        v.play();
+        v.muted = false; // ミュート無効
+        v.currentTime = 0;  // 開始秒数を戻す
+      }
+    });
+      console.log();
+      console.log(evt);
+      console.log(this);
+
+
+    }); */
       // Mic status
       let micEnabled = true;
       // Mic button ele
@@ -94,14 +195,62 @@
       // components にposition と rotationをセットしているので、
       // ランダムにセットされたアバターカラーを同期するためのカスタムスキーマを定義する
       NAF.schemas.add({
-        template: '#avatar-template',
-        components: ['position', 'rotation'],
+        template: '#head-template',
+        components: [
+          'position',
+          'rotation',
+          {
+            selector: '.nametag',
+            component: 'text',
+            property: 'value',
+          },
+          {
+            selector: '.avatarmodel',
+            component: 'testcomponent',
+            property: 'id',
+          },
+          {
+            selector: '.avatarmodel',
+            component: 'gltf-model',
+          },
+          {
+            selector: '.avatarmodel',
+            component: 'muteplay',
+            property: 'toggle',
+          },
+        ],
       });
+      /* NAF.schemas.add({
+        template: '#my-template',
+        components: [
+          {
+            selector: '.videomodel',
+            component: 'muteplay',
+            property: 'toggle',
+          },
+        ],
+      }); */
+      /* var scene = document.querySelector('a-scene');
 
+      if (scene.hasLoaded) {
+        onSceneLoad();
+      } else {
+        scene.addEventListener('loaded', onSceneLoad);
+      } */
+
+      function onSceneLoad() {
+        var username = 'usertest';
+        username = prompt('Choose a username', username);
+        var player = document.getElementById('player');
+        console.log(player);
+        var myNametag = player.querySelector('.nametag');
+        myNametag.setAttribute('text', 'value', username);
+
+        document.querySelector('a-scene').components['networked-scene'].connect();
+      }
       // Called by Networked-Aframe when connected to server
       function onConnect() {
         console.log('onConnect', new Date());
-
         // Handle mic button click (Mute and Unmute)
         micBtnEle.addEventListener('click', function () {
           NAF.connection.adapter.enableMicrophone(!micEnabled);
@@ -109,6 +258,58 @@
           micBtnEle.textContent = micEnabled ? 'Mute Mic' : 'Unmute Mic';
         });
       }
+      /**
+       * 地面に立つためのコンポーネント
+       */
+      AFRAME.registerComponent('stand-on', {
+        schema: {
+          raycaster: { type: 'selector' },
+        },
+        dependency: ['raycaster'],
+        init: function () {
+          this.el.addEventListener('raycaster-intersection', (evt) => {
+            if (evt.target !== this.data.raycaster) return; // 対応するレイキャスターのみ反応
+            this.raycaster = evt.target.components.raycaster;
+            this.target_el = evt.detail.els[0];
+          });
+
+          this.el.addEventListener('raycaster-intersection-cleared', (evt) => {
+            if (evt.target !== this.data.raycaster) return;
+            this.raycaster = null;
+            this.target_el = null;
+          });
+        },
+
+        tick: function () {
+          if (!this.raycaster || !this.target_el) return;
+          const item = this.raycaster.getIntersection(this.target_el);
+          this.el.object3D.position.y = item.point.y + 1.7;
+        },
+      });
+      AFRAME.registerComponent('wall-collider', {
+        schema: {
+          raycaster: { type: 'selector' },
+        },
+        multiple: true,
+        dependency: ['raycaster'],
+        init: function () {
+          this.el.addEventListener('raycaster-intersection', (evt) => {
+            console.log(evt.target);
+            if (evt.target !== this.data.raycaster) return; // 対応するレイキャスターのみ反応
+            this.face = evt.detail.intersections[0].face.normal;
+          });
+
+          this.el.addEventListener('raycaster-intersection-cleared', (evt) => {
+            if (evt.target.id !== this.data.id) return;
+            this.face = null;
+          });
+        },
+
+        tick: function () {
+          if (!this.face) return;
+          this.el.object3D.position.add(this.face.multiplyScalar(0.5));
+        },
+      });
     </script>
   </body>
 </html>
