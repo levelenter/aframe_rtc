@@ -1,15 +1,15 @@
 module.exports = {
   apps: [
     {
-      name: 'Application Name(4001)',
+      name: 'VRrtc',
       script: 'server_build',
       /* cwd: '/home/XXXX/YYYY/', */
       env: {
-        PORT: 4001,
+        PORT: 4441,
         NODE_ENV: 'development',
       },
       env_production: {
-        PORT: 4001,
+        PORT: 4441,
         NODE_ENV: 'production',
       },
     },
