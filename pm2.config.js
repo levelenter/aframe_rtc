@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'Application Name(4001)',
-      script: '/server/index.ts',
-      cwd: '/home/XXXX/YYYY/',
+      script: 'server_build',
+      /* cwd: '/home/XXXX/YYYY/', */
       env: {
         PORT: 4001,
         NODE_ENV: 'development',

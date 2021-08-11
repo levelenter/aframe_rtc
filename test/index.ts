@@ -1,8 +1,9 @@
 import http from 'http';
 import path from 'path';
 import express from 'express';
-import sockeIO from 'socket.io';
+import * as sockeIO from 'socket.io';
 const easyrtc = require('open-easyrtc');
+
 // Load required modules
 var fs = require('fs'); // file system core module
 
@@ -11,7 +12,7 @@ var fs = require('fs'); // file system core module
 // 1. you need to replace this "require("../");" by "require("open-easyrtc");"
 // 2. install easyrtc (npm i open-easyrtc --save) in server_example/package.json
 
-/* var easyrtc = require('./easy_rtc.js'); */ // EasyRTC internal module
+/* var easyrtc = require('../'); */ // EasyRTC internal module
 
 process.title = 'networked-aframe-server';
 const port = 4441;
@@ -30,7 +31,7 @@ app.use(express.static(path.resolve(__dirname, '..', 'client')));
 
 // WebSocketのサーバーを起動
 const webServer = http.createServer(app);
-const io = sockeIO(webServer);
+const io = new sockeIO.Server(webServer);
 
 // Start EasyRTC server
 
@@ -75,7 +76,7 @@ io.on('connection', (socket) => {
 
   // ブロードキャストイベントに反応
   socket.on('broadcast', (data) => {
-    socket.to(curRoom).broadcast.emit('broadcast', data);
+    socket.broadcast.to(curRoom).emit('broadcast', data);
   });
 
   // 切断イベントに反応
@@ -86,7 +87,7 @@ io.on('connection', (socket) => {
 
       delete rooms[curRoom].occupants[socket.id];
       const occupants = rooms[curRoom].occupants;
-      socket.to(curRoom).broadcast.emit('occupantsChanged', { occupants });
+      socket.broadcast.to(curRoom).emit('occupantsChanged', { occupants });
 
       if (occupants == {}) {
         console.log('everybody left room');
@@ -100,3 +101,4 @@ io.on('connection', (socket) => {
 webServer.listen(port, () => {
   console.log('listening on http://localhost:' + port);
 });
+/*  */

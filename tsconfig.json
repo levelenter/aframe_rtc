@@ -12,6 +12,7 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": ["webpack-env"],
+    "typeRoots": ["node_modules/@types", "src/@types"],
     "lib": ["es2019"]
   },
   "include": ["client/**/*.ts", "server/**/*.ts"],

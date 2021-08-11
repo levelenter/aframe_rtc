@@ -14,7 +14,7 @@ var fs = require('fs'); // file system core module
 // 2. install easyrtc (npm i open-easyrtc --save) in server_example/package.json
 /* var easyrtc = require('../'); */ // EasyRTC internal module
 process.title = 'networked-aframe-server';
-const port = 8080;
+const port = 4441;
 // HTTPサーバー起動（clientディレクトリを公開）
 const app = express_1.default();
 // httpApp.use(express.static(__dirname + '/static/'));
@@ -75,4 +75,5 @@ io.on('connection', (socket) => {
 webServer.listen(port, () => {
     console.log('listening on http://localhost:' + port);
 });
+/*  */
 //# sourceMappingURL=index.js.map
