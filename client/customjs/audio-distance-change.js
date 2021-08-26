@@ -3,9 +3,9 @@ AFRAME.registerComponent('audiodistancechange', {
     toggle: { type: 'number', default: 0 },
     //クリックイベント用ボタンのid
     onButtonid: { type: 'string' },
-    //テンプレートを呼び出したnetworkedentityのid
+    //テンプレートを呼び出したnetworkedentityのclass
     player: { type: 'string' },
-    //audiodistancechangeをコンポーネントとして持つ3Dモデルのentityのid
+    //audiodistancechangeをコンポーネントとして持つ3Dモデルのentityのclass
     avatar: { type: 'string' },
   },
   init: function () {
@@ -14,10 +14,10 @@ AFRAME.registerComponent('audiodistancechange', {
     /* const audio = this.el; */
     const player = document.getElementById(this.data.player);
     const avatar = player.querySelector('.' + this.data.avatar);
-    console.log(player);
-    console.log(button);
-    console.log('.' + this.data.avatar);
-    console.log(player.querySelector('.avatarmodel'));
+    //console.log(player);
+    //console.log(button);
+    //console.log('.' + this.data.avatar);
+    //console.log(player.querySelector('.avatarmodel'));
     //クリックイベント(クリックイベントはトグル操作のみ)
     button.addEventListener('click', function () {
       avatar.setAttribute('audiodistancechange', 'toggle', '1');
