@@ -10,13 +10,13 @@
     <!--  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script> -->
 
     <script src="./easyrtc/easyrtc.js"></script>
-    <script src="./audio-distance-change.js"></script>
-    <script src="./get-username.js"></script>
-    <script src="./avataer-change.js"></script>
+    <script src="./customjs/audio-distance-change.js"></script>
+    <script src="./customjs/get-username.js"></script>
+    <script src="./customjs/avataer-change.js"></script>
     <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
     <script src="./spawn-in-circle.component.js"></script>
     <!-- <script src="./test.js"></script> -->
-    <script src="./video.js"></script>
+    <script src="./customjs/video.js"></script>
   </head>
   <body>
     <div class="inputName">
@@ -71,7 +71,7 @@
             <a-entity id="stand-on-ray" raycaster="objects: .ground; direction:0 -1 0"></a-entity>
             <a-text class="nametag" id="usernametext" position="0.5 2 1" width="10" height="10" rotation="0 180 0" value="user" side="double" get-username></a-text>
             <!-- アバターを作る -->
-            <a-gltf-model id="avatarid" class="avatarmodel" position="0 -1.6 1" rotation="0 180 0" scale="0.1 0.1 0.1" src="#robo" animation-mixer="" avatar-change muteplay mutestop audiodistancechange audiodistancereset> </a-gltf-model>
+            <a-gltf-model id="avatarid" class="avatarmodel" position="0 -1.6 1" rotation="0 180 0" scale="0.1 0.1 0.1" src="#robo" animation-mixer="" avatar-change muteplay mutestop audiodistancechange="onButtonid:audio-change;player:player;avatar:avatarmodel;" audiodistancereset="offButtonid:audio-inverse;player:player;avatar:avatarmodel;"> </a-gltf-model>
             <!-- <a-entity class="avatarmodel" position="0 -1.6 1" rotation="0 180 0" scale="0.1 0.1 0.1" gltf-model="#robo" animation-mixer="" avatar-change></a-entity> -->
           </a-entity>
         </template>
